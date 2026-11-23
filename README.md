@@ -267,3 +267,5 @@ Data availability, publication timestamps and redistribution permissions must be
 This is an educational and portfolio research project. It is not a production electricity trading system and does not provide investment or trading advice.
 
 ![European Power Price Forecasting Dashboard](docs/images/dashboard.png)
+
+**Live Dashboard:** https://european-power-price-forecasting-83hmc9wufvfgw5wzmtduel.streamlit.app/
