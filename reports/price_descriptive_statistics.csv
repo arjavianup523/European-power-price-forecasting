@@ -1,0 +1,22 @@
+metric,value
+total_observations,71569
+valid_prices,71377
+missing_prices,192
+negative_prices,2552
+zero_prices,206
+positive_prices,68619
+negative_price_percentage,3.575381425389131
+mean_eur_mwh,96.41726827269288
+median_eur_mwh,77.76
+standard_deviation,91.36848524582813
+minimum_eur_mwh,-500.0
+maximum_eur_mwh,936.28
+first_valid_price_timestamp,2018-10-01 00:00:00+02:00
+last_valid_price_timestamp,2026-11-23 23:00:00+01:00
+price_quantile_0.01,-10.1248
+price_quantile_0.05,1.3420000000000003
+price_quantile_0.25,39.33
+price_quantile_0.50,77.76
+price_quantile_0.75,120.57249999999999
+price_quantile_0.95,269.27
+price_quantile_0.99,469.0668000000004

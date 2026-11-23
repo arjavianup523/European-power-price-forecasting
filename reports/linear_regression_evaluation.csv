@@ -1,0 +1,2 @@
+model,training_observations,testing_observations,MAE_EUR_MWh,sMAPE_percent,epochs
+NumPy Linear Regression,56872,14218,28.064396006550695,43.73017567047863,300

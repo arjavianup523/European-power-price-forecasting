@@ -1,0 +1,16 @@
+metric,value
+total_observations,71569.0
+valid_aggregated_prices,71377.0
+missing_aggregated_prices,192.0
+complete_hours,71377.0
+incomplete_hours,192.0
+future_delivery_records,175.0
+future_records_with_prices,31.0
+comparable_source_prices,71377.0
+source_prices_matching_within_0_01,71377.0
+mean_absolute_source_difference_eur_mwh,0.0003352270339185684
+maximum_absolute_source_difference_eur_mwh,0.005000000000052296
+minimum_price_eur_mwh,-500.0
+maximum_price_eur_mwh,936.28
+mean_price_eur_mwh,96.41726827269288
+median_price_eur_mwh,77.76

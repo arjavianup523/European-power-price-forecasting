@@ -1,0 +1,2 @@
+model,training_observations,testing_observations,MAE_EUR_MWh,sMAPE_percent
+24-hour persistence baseline,56872,14218,29.537160817273875,48.34728508101259

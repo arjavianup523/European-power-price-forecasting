@@ -1,0 +1,3 @@
+Dataset,Total observations,Invalid timestamps,Invalid prices,Duplicate timestamps,Timestamp gaps,Missing intervals,Irregular intervals,Future observations,Negative prices,Extreme prices,Local timestamp mismatches,First timestamp UTC,Last timestamp UTC,Minimum price,Maximum price,Mean price,Median price,Price standard deviation
+hour,71569,0,192,0,0,0,0,175,2537,1774,0,2018-09-30 22:00:00+00:00,2026-11-29 22:00:00+00:00,-500.0,936.28,96.41737254297604,77.76,91.36853001293127
+quarterhour,286276,0,768,0,0,0,0,703,10167,7087,0,2018-09-30 22:00:00+00:00,2026-11-29 22:45:00+00:00,-500.0,936.28,96.4172682726929,77.71,91.51976224365296

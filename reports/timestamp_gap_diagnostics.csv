@@ -1,0 +1,3 @@
+dataset,previous_timestamp_utc,next_timestamp_utc,previous_timestamp_berlin,next_timestamp_berlin,gap_duration,missing_intervals
+hour,2026-11-19 22:00:00+00:00,2026-11-21 23:00:00+00:00,2026-11-19 23:00:00+01:00,2026-11-22 00:00:00+01:00,2 days 01:00:00,48
+quarterhour,2026-11-19 22:45:00+00:00,2026-11-21 23:00:00+00:00,2026-11-19 23:45:00+01:00,2026-11-22 00:00:00+01:00,2 days 00:15:00,192

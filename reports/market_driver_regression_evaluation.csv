@@ -1,0 +1,2 @@
+model,training_rows,testing_rows,features,mae_eur_mwh,smape_percent,evaluation_type
+Market Driver Linear Regression,533,134,4,30.1128643803052,18.5994510521752,Exploratory contemporaneous benchmark

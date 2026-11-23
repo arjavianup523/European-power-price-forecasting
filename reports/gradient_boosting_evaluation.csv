@@ -1,0 +1,2 @@
+model,training_observations,testing_observations,MAE_EUR_MWh,sMAPE_percent,estimators
+NumPy Gradient Boosting,56872,14218,31.388462102775033,44.07694835827319,50
