@@ -21,9 +21,27 @@ st.set_page_config(
 @st.cache_data
 def load_data():
     prices = pd.read_csv(PRICE_FILE)
+
     prices["timestamp_utc"] = pd.to_datetime(
-        prices["timestamp_utc"], utc=True
+        prices["timestamp_utc"],
+        utc=True,
+        errors="coerce",
     )
+
+    # Remove invalid timestamps and future delivery observations.
+    now_utc = pd.Timestamp.now(tz="UTC")
+
+    prices = prices.dropna(
+        subset=["timestamp_utc"]
+    ).copy()
+
+    prices = prices.loc[
+        prices["timestamp_utc"] <= now_utc
+    ].copy()
+
+    prices = prices.sort_values(
+        "timestamp_utc"
+    ).reset_index(drop=True)
 
     model_results = pd.read_csv(MODEL_FILE)
 
@@ -35,14 +53,25 @@ def load_data():
     return prices, model_results, drivers
 
 
-def calculate_css(electricity, gas, carbon, efficiency, emissions_factor):
+def calculate_css(
+    electricity,
+    gas,
+    carbon,
+    efficiency,
+    emissions_factor,
+):
     gas_cost = gas / efficiency
     carbon_cost = carbon * emissions_factor / efficiency
 
-    return electricity - gas_cost - carbon_cost, gas_cost, carbon_cost
+    return (
+        electricity - gas_cost - carbon_cost,
+        gas_cost,
+        carbon_cost,
+    )
 
 
 st.title("⚡ European Power Price Forecasting")
+
 st.caption(
     "Germany (DE-LU) | Day-ahead electricity prices | "
     "Energy market intelligence"
@@ -50,12 +79,14 @@ st.caption(
 
 try:
     prices, model_results, drivers = load_data()
+
 except FileNotFoundError as error:
     st.error(f"Required project data file not found: {error}")
     st.stop()
 
 
 # MODEL PERFORMANCE
+
 st.header("Forecasting Model Performance")
 
 baseline_mae = model_results["baseline_mae"].mean()
@@ -65,37 +96,95 @@ model_smape = model_results["model_smape"].mean()
 
 improvement = (
     (baseline_mae - model_mae) / baseline_mae * 100
+    if baseline_mae != 0
+    else 0
 )
 
 col1, col2, col3, col4 = st.columns(4)
 
-col1.metric("Day-ahead Model MAE", f"€{model_mae:.2f}/MWh")
-col2.metric("Persistence MAE", f"€{baseline_mae:.2f}/MWh")
-col3.metric("MAE Improvement", f"{improvement:.1f}%")
-col4.metric("Model sMAPE", f"{model_smape:.2f}%")
+col1.metric(
+    "Day-ahead Model MAE",
+    f"€{model_mae:.2f}/MWh",
+)
+
+col2.metric(
+    "Persistence MAE",
+    f"€{baseline_mae:.2f}/MWh",
+)
+
+col3.metric(
+    "MAE Improvement",
+    f"{improvement:.1f}%",
+)
+
+col4.metric(
+    "Model sMAPE",
+    f"{model_smape:.2f}%",
+)
 
 
 # PRICE MARKET OVERVIEW
+
 st.header("Electricity Price Market Overview")
 
-valid_prices = prices.dropna(subset=["price_eur_mwh"]).copy()
+valid_prices = prices.dropna(
+    subset=["price_eur_mwh"]
+).copy()
 
-latest_price = valid_prices["price_eur_mwh"].iloc[-1]
+if valid_prices.empty:
+    st.error(
+        "No valid historical electricity price observations "
+        "are available up to the current time."
+    )
+    st.stop()
+
+valid_prices = valid_prices.sort_values(
+    "timestamp_utc"
+).reset_index(drop=True)
+
+latest_row = valid_prices.iloc[-1]
+
+latest_price = latest_row["price_eur_mwh"]
+latest_timestamp = latest_row["timestamp_utc"]
+
 average_price = valid_prices["price_eur_mwh"].mean()
 median_price = valid_prices["price_eur_mwh"].median()
+
 negative_hours = (
     valid_prices["price_eur_mwh"] < 0
 ).sum()
 
 col1, col2, col3, col4 = st.columns(4)
 
-col1.metric("Last Recorded Price", f"€{latest_price:.2f}/MWh")
-col2.metric("Historical Average", f"€{average_price:.2f}/MWh")
-col3.metric("Historical Median", f"€{median_price:.2f}/MWh")
-col4.metric("Negative Price Hours", f"{negative_hours:,}")
+col1.metric(
+    "Last Recorded Price",
+    f"€{latest_price:.2f}/MWh",
+)
+
+col2.metric(
+    "Historical Average",
+    f"€{average_price:.2f}/MWh",
+)
+
+col3.metric(
+    "Historical Median",
+    f"€{median_price:.2f}/MWh",
+)
+
+col4.metric(
+    "Negative Price Hours",
+    f"{negative_hours:,}",
+)
+
+st.caption(
+    "Latest eligible delivery timestamp: "
+    f"{latest_timestamp.tz_convert('Europe/Berlin'):%d %b %Y, %H:%M} "
+    "(Europe/Berlin). Future-dated observations are excluded."
+)
 
 
 # PRICE HISTORY
+
 st.header("Electricity Price History")
 
 history = valid_prices.tail(24 * 30).copy()
@@ -114,6 +203,7 @@ st.line_chart(
 
 
 # WALK-FORWARD MODEL EVALUATION
+
 st.header("Walk-Forward Validation")
 
 st.caption(
@@ -150,6 +240,7 @@ st.bar_chart(
 
 
 # ENERGY MARKET DRIVERS
+
 st.header("Energy Market Driver Analysis")
 
 if not drivers.empty:
@@ -164,11 +255,15 @@ if not drivers.empty:
         use_container_width=True,
         hide_index=True,
     )
+
 else:
-    st.info("Driver correlation report is not available yet.")
+    st.info(
+        "Driver correlation report is not available yet."
+    )
 
 
 # CLEAN SPARK SPREAD CALCULATOR
+
 st.header("Clean Spark Spread Calculator")
 
 st.caption(
@@ -228,9 +323,20 @@ if efficiency > 0:
 
     col1, col2, col3 = st.columns(3)
 
-    col1.metric("Gas Cost", f"€{gas_cost:.2f}/MWh")
-    col2.metric("Carbon Cost", f"€{carbon_cost:.2f}/MWh")
-    col3.metric("Clean Spark Spread", f"€{spread:.2f}/MWh")
+    col1.metric(
+        "Gas Cost",
+        f"€{gas_cost:.2f}/MWh",
+    )
+
+    col2.metric(
+        "Carbon Cost",
+        f"€{carbon_cost:.2f}/MWh",
+    )
+
+    col3.metric(
+        "Clean Spark Spread",
+        f"€{spread:.2f}/MWh",
+    )
 
     if spread > 0:
         st.success("Positive clean spark spread")
@@ -244,6 +350,7 @@ if efficiency > 0:
 
 
 # PROJECT METHODOLOGY
+
 with st.expander("Methodology and limitations"):
     st.markdown(
         """
@@ -258,6 +365,12 @@ with st.expander("Methodology and limitations"):
         - Exploratory correlation analysis.
         - Actual market-driver observations are not treated as
           verified day-ahead forecast inputs.
+
+        **Data quality**
+        - Future-dated delivery observations are excluded
+          from dashboard historical price metrics.
+        - Historical source publication timestamps are not
+          available to verify all feature vintages.
 
         **Energy economics**
         - Simplified clean spark spread.
