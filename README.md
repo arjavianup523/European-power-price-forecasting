@@ -141,15 +141,7 @@ The Streamlit dashboard brings together:
 
 ### Dashboard Preview
 
-Add your dashboard screenshot at:
-
-`docs/images/dashboard.png`
-
-Then uncomment this line:
-
-```markdown
-![European Power Price Forecasting Dashboard](docs/images/dashboard.png)
-```
+The dashboard preview is included below.
 
 ## Technology Stack
 
@@ -207,8 +199,8 @@ European_Power_Price_Forecasting/
 ### 1. Clone the repository
 
 ```bash
-git clone YOUR_GITHUB_REPOSITORY_URL
-cd European_Power_Price_Forecasting
+git clone https://github.com/arjavianup523/European-power-price-forecasting.git
+cd European-power-price-forecasting
 ```
 
 ### 2. Create a virtual environment
