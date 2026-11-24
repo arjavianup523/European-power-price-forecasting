@@ -143,7 +143,6 @@ valid_prices = valid_prices.sort_values(
 ).reset_index(drop=True)
 
 latest_row = valid_prices.iloc[-1]
-
 latest_price = latest_row["price_eur_mwh"]
 latest_timestamp = latest_row["timestamp_utc"]
 
@@ -187,10 +186,16 @@ st.caption(
 
 st.header("Electricity Price History")
 
-history = valid_prices.tail(24 * 30).copy()
+# Use the original price data, not valid_prices.
+# This preserves NaN observations so missing periods appear as gaps.
+history = prices.tail(24 * 30).copy()
 
 history["timestamp_local"] = (
     history["timestamp_utc"].dt.tz_convert("Europe/Berlin")
+)
+
+history = history.sort_values(
+    "timestamp_utc"
 )
 
 history = history.set_index("timestamp_local")
@@ -372,6 +377,8 @@ with st.expander("Methodology and limitations"):
           from dashboard historical price metrics.
         - Historical source publication timestamps are not
           available to verify all feature vintages.
+        - Missing hourly price observations are preserved
+          as gaps in the historical price chart.
 
         **Energy economics**
         - Simplified clean spark spread.
