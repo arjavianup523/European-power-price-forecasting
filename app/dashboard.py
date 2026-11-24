@@ -236,6 +236,7 @@ chart_results = model_results.set_index("fold")[
 st.bar_chart(
     chart_results,
     y_label="MAE (€/MWh)",
+    stack=False,
 )
 
 
